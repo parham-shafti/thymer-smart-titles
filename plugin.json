@@ -1,0 +1,14 @@
+{
+	"ver": 1,
+	"name": "Smart Titles",
+	"icon": "text-size",
+	"description": "Shows property values, grayed out, after page names in references, search results and the quick switcher. Run 'Smart Titles Settings' from the command palette to choose collections and properties.",
+	"custom": {
+		"collections": {
+			"Tools": {
+				"fields": ["Serves", "Source"],
+				"separator": " – "
+			}
+		}
+	}
+}
