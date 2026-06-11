@@ -22,7 +22,7 @@ Supported property types: linked pages (record), choice, text, number, date/date
 
 1. In Thymer, open the Command Palette (`Cmd+P` / `Ctrl+P`), run **Plugins**, and click **Create Plugin** under Global Plugins.
 2. In the plugin's dialog, go to the code editor (click **Edit as Code** if you see the settings view).
-3. In the **Custom Code** tab, replace the contents with [`dist/plugin.js`](dist/plugin.js).
+3. In the **Custom Code** tab, replace the contents with [`plugin.js`](plugin.js).
 4. In the **Configuration** tab, replace the contents with [`plugin.json`](plugin.json).
 5. Click **Save**.
 
@@ -75,9 +75,8 @@ Settings are saved with the plugin-management API `saveConfiguration(conf)` (via
 
 ```
 smart-titles/
-├─ plugin.js        # readable source (export class Plugin extends AppPlugin)
+├─ plugin.js        # the plugin source — paste directly into Thymer's Custom Code
 ├─ plugin.json      # plugin configuration
-├─ dist/plugin.js   # built bundle, what you paste into Thymer
 └─ tools/           # dev helpers (Chrome DevTools Protocol against the desktop app)
    ├─ cdp.js        # evaluate JS in Thymer's window (needs --remote-debugging-port=9222)
    └─ push.js       # hot-push code+config to a plugin with Hot Reload enabled
