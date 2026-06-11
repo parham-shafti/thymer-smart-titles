@@ -122,7 +122,7 @@ const IGNORED_LINE_CHILDREN = [
 /* Collection fields that never make sense in a title suffix. */
 const EXCLUDED_FIELD_IDS = ['title', 'banner', 'icon'];
 
-export class Plugin extends AppPlugin {
+class Plugin extends AppPlugin {
 
 	/* Initialized as class fields so a stray onUnload() on a never-loaded
 	 * instance (e.g. during the plugin editor's validate/preview cycle)
