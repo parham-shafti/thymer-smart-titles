@@ -2,7 +2,8 @@
 
 Smart Titles is a [Thymer](https://thymer.com) plugin that shows a page's properties next to its name. Wherever a page appears as a reference, in search results, or in the quick switcher, its title is extended with the property values you've chosen, shown in gray after the name. That way you can tell similar pages apart and understand what a page is about without opening it. The extra information only appears where it helps: references inside a sentence, collection views, and the open page's own title stay plain. You decide which collections and properties to show, in what order and with what separator, through a simple settings dialog in the command palette. Everything is display only, so your actual page titles are never changed.
 
-![Quick switcher with Smart Titles](screenshots/quick-switcher.png)
+<!-- ![Quick switcher with Smart Titles](screenshots/quick-switcher.png) -->
+![Smart Titles settings dialog](screenshots/settings.png)
 
 ## Where it shows
 
