@@ -35,6 +35,15 @@ const CSS = `
 	white-space: pre;
 }
 
+/* In autocompletes (Jump To, inline @) space can be tight: let the suffix
+ * truncate with an ellipsis so the page name itself always stays visible. */
+.autocomplete--option-label .texp-suffix {
+	max-width: 45%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: bottom;
+}
+
 /* --- settings dialog --- */
 .texp-backdrop {
 	position: fixed; inset: 0; z-index: 10000;
@@ -278,13 +287,22 @@ class Plugin extends AppPlugin {
 				if (!node || !node.nodeType || !result) continue;
 				const label = node.querySelector('.autocomplete--option-label');
 				if (!label) continue;
-				const guid = result.obj && result.obj.json && result.obj.json.guid;
+				const guid = this.guidFromResult(result.obj || result);
 				if (guid) this.applySuffix(label, guid);
 				else this.removeSuffix(label);
 			}
 		} catch (e) {
 			/* internals changed — skip silently */
 		}
+	}
+
+	/* Record guid of an autocomplete entry. Jump To stores it as json.guid;
+	 * the inline @ menu stores it directly as the option's value. */
+	guidFromResult(o) {
+		if (!o) return null;
+		if (o.json && o.json.guid) return o.json.guid;
+		if (typeof o.value === 'string' && this.looksLikeGuid(o.value)) return o.value;
+		return null;
 	}
 
 	/* --- suffix computation and DOM application --- */
@@ -298,7 +316,11 @@ class Plugin extends AppPlugin {
 		const span = document.createElement('span');
 		span.className = 'texp-suffix';
 		span.textContent = suffix;
-		el.appendChild(span);
+		// the inline @ menu ends its labels with an "→" text node — keep that
+		// arrow last so rows read "Name – props →" rather than "Name → – props"
+		const last = el.lastChild;
+		if (last && last.nodeType === 3 && /^\s*→\s*$/.test(last.textContent)) el.insertBefore(span, last);
+		else el.appendChild(span);
 	}
 
 	removeSuffix(el) {
