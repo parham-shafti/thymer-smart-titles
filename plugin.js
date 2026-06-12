@@ -44,71 +44,182 @@ const CSS = `
 		width: 600px !important;
 		max-width: calc(100vw - 20px) !important;
 	}
+	.cmdpal--dialog {
+		width: 650px !important;
+		max-width: calc(100vw - 20px) !important;
+	}
 }
 
-/* --- settings dialog --- */
+/* --- settings dialog (master-detail) ---
+ * All colors come from Thymer's own theme tokens so the dialog follows the
+ * user's theme (light/dark) and accent automatically. */
 .texp-backdrop {
 	position: fixed; inset: 0; z-index: 10000;
-	background: rgba(0, 0, 0, 0.55);
+	background: var(--full-scrim, rgba(0, 0, 0, 0.45));
 	display: flex; align-items: flex-start; justify-content: center;
 }
-.texp-dialog {
-	margin-top: 8vh; width: 560px; max-width: 92vw; max-height: 80vh;
-	overflow-y: auto;
-	background: #1f2023; color: #d7d8db;
-	border: 1px solid #3a3b40; border-radius: 8px;
-	box-shadow: 0 18px 50px rgba(0,0,0,.5);
-	padding: 20px 22px;
+.st-shell {
+	margin-top: 6vh; width: 920px; max-width: calc(100vw - 32px);
+	max-height: calc(100vh - 64px);
+	display: flex; flex-direction: column; overflow: hidden;
+	background: var(--modal-bg); color: var(--text-color);
+	border: 1px solid color-mix(in srgb, var(--button-2nd-border-color) 35%, var(--modal-bg));
+	border-radius: 9px;
+	box-shadow: 0 24px 60px -24px rgba(0,0,0,.7);
+	font-family: var(--font-sans);
 	font-size: 14px;
 }
-.texp-dialog h2 { margin: 0 0 4px; font-size: 17px; color: #fff; }
-.texp-dialog .texp-hint { color: #8b8d94; font-size: 12.5px; margin: 0 0 14px; }
-.texp-card {
-	border: 1px solid #36373c; border-radius: 6px;
-	padding: 12px 14px; margin-bottom: 12px; background: #232428;
+.st-head { padding: 24px 26px 18px; border-bottom: 1px solid var(--cards-border-color); }
+.st-title { margin: 0 0 6px; font-size: 22px; font-weight: 700; color: var(--color-text-100, var(--text-color)); }
+.st-desc { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--color-text-600, var(--text-color)); }
+.st-body { display: flex; flex: 1; min-height: 0; }
+.st-rail {
+	width: 280px; flex: none; display: flex; flex-direction: column; min-height: 0;
+	border-right: 1px solid var(--cards-border-color); background: var(--cards-bg);
 }
-.texp-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.texp-card-head .texp-col-name { font-weight: 600; color: #fff; flex: 1; }
-.texp-section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #8b8d94; margin: 10px 0 6px; }
-.texp-pills { display: flex; flex-wrap: wrap; gap: 6px; min-height: 26px; }
-.texp-pill {
-	display: inline-flex; align-items: center; gap: 5px;
-	border-radius: 12px; padding: 2px 10px; font-size: 12.5px;
-	background: #2e3035; border: 1px solid #43454b; color: #d7d8db;
-	cursor: pointer; user-select: none;
+.st-rail-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 14px 8px; }
+.st-label {
+	font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+	letter-spacing: .14em; color: var(--color-text-800, var(--text-color));
 }
-.texp-pill:hover { border-color: #6b6e76; }
-.texp-pill.texp-chosen { background: #2c3b3a; border-color: #3f5d5a; }
-.texp-pill .texp-type { color: #8b8d94; font-size: 11px; }
-.texp-pill button {
-	all: unset; cursor: pointer; color: #9a9da5; font-size: 11px; line-height: 1; padding: 1px 2px;
+.st-count-pill {
+	font-size: 11px; padding: 1px 7px; color: var(--color-text-600);
+	background: var(--button-minimal-bg-color); border: 1px solid var(--button-border-color);
+	border-radius: var(--button-radius, 5px);
 }
-.texp-pill button:hover { color: #fff; }
-.texp-sep-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-.texp-sep-row label { font-size: 12.5px; color: #8b8d94; }
-.texp-sep-input {
-	width: 70px; background: #1a1b1e; color: #fff;
-	border: 1px solid #43454b; border-radius: 4px; padding: 3px 8px; font-size: 13px;
-	font-family: monospace;
+.st-search {
+	margin: 0 12px 10px; padding: 7px 9px; display: flex; align-items: center; gap: 6px;
+	background: var(--button-minimal-bg-color); border: 1px solid var(--button-border-color);
+	border-radius: var(--button-radius, 5px);
 }
-.texp-preview { margin-top: 10px; font-size: 13px; color: #8b8d94; }
-.texp-preview .texp-suffix { pointer-events: auto; }
-.texp-add-row { margin: 4px 0 14px; }
-.texp-select {
-	background: #1a1b1e; color: #d7d8db; border: 1px solid #43454b;
-	border-radius: 4px; padding: 5px 8px; font-size: 13px; max-width: 100%;
+.st-search:focus-within { border-color: var(--color-primary-500); }
+.st-search svg { flex: none; opacity: .45; }
+.st-search input {
+	all: unset; flex: 1; min-width: 0; font-size: 13px;
+	font-family: var(--font-mono); color: var(--text-color);
 }
-.texp-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-.texp-btn {
-	all: unset; cursor: pointer; border-radius: 5px; padding: 6px 14px; font-size: 13px;
-	border: 1px solid #43454b; color: #d7d8db;
+.st-rail-list { flex: 1; overflow-y: auto; padding: 0 10px 10px; display: flex; flex-direction: column; gap: 2px; }
+.st-rail-row {
+	all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px;
+	padding: 8px 10px; border: 1px solid transparent; border-radius: var(--button-radius, 5px);
+	cursor: pointer;
 }
-.texp-btn:hover { border-color: #6b6e76; color: #fff; }
-.texp-btn-primary { background: #2f6b62; border-color: #2f6b62; color: #fff; }
-.texp-btn-primary:hover { background: #387d72; border-color: #387d72; }
-.texp-icon-btn { all: unset; cursor: pointer; color: #8b8d94; padding: 2px 6px; font-size: 14px; }
-.texp-icon-btn:hover { color: #fff; }
-.texp-empty { color: #8b8d94; font-style: italic; font-size: 13px; }
+.st-rail-row:hover { background: var(--cmdpal-hover-bg-color, var(--button-bg-hover-color)); }
+.st-rail-row.sel {
+	background: var(--color-primary-950);
+	border-color: color-mix(in srgb, var(--color-primary-500) 38%, transparent);
+}
+.st-rail-row .nm { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-rail-row.sel .nm { color: var(--link-color); }
+.st-badge {
+	font-size: 11px; min-width: 22px; text-align: center; padding: 1px 4px;
+	color: var(--color-text-600); background: var(--button-bg-color);
+	border: 1px solid var(--button-border-color); border-radius: var(--button-radius, 5px);
+}
+.st-rail-row.sel .st-badge {
+	background: transparent; color: var(--link-color);
+	border-color: color-mix(in srgb, var(--color-primary-500) 38%, transparent);
+}
+.st-add-coll {
+	all: unset; box-sizing: border-box; margin: 10px 12px 12px; padding: 7px; text-align: center;
+	font-size: 13px; color: var(--color-text-600); cursor: pointer;
+	border: 1px dashed var(--button-2nd-border-color); border-radius: var(--button-radius, 5px);
+}
+.st-add-coll:hover { color: var(--link-color); border-color: var(--color-primary-500); }
+.st-detail { flex: 1; min-width: 0; overflow-y: auto; padding: 22px 26px 28px; }
+.st-ed-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.st-ed-name { font-size: 19px; font-weight: 700; color: var(--color-text-100, var(--text-color)); }
+.st-remove {
+	all: unset; box-sizing: border-box; padding: 4px 10px; font-size: 12px; cursor: pointer;
+	color: var(--color-text-800); border: 1px solid var(--button-border-color);
+	border-radius: var(--button-radius, 5px); transition: color .13s, border-color .13s;
+}
+.st-remove:hover { color: #ff8d7a; border-color: #ff8d7a; }
+.st-sec-label { margin: 20px 0 8px; }
+.st-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.st-chip {
+	display: inline-flex; align-items: center; gap: 4px; padding: 5px 9px;
+	line-height: 1.4;
+	background: var(--color-primary-950);
+	border: 1px solid color-mix(in srgb, var(--color-primary-500) 38%, transparent);
+	border-radius: var(--button-radius, 5px);
+	font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+	color: var(--link-color); cursor: grab;
+}
+.st-chip.st-dragging { opacity: .4; }
+.st-chip.st-droptarget { box-shadow: -3px 0 0 var(--color-primary-500); }
+.st-chip button {
+	all: unset; cursor: pointer; padding: 0 2px; font-size: 12px; line-height: 1;
+	color: color-mix(in srgb, var(--link-color) 55%, transparent);
+}
+.st-chip button:hover { color: var(--link-color); }
+.st-chip button[disabled] { opacity: .3; cursor: default; }
+.st-add {
+	all: unset; box-sizing: border-box; padding: 5px 10px; font-size: 12.5px; cursor: pointer;
+	line-height: 1.4;
+	color: var(--color-text-600); background: var(--button-minimal-bg-color);
+	border: 1px dashed var(--button-2nd-border-color); border-radius: var(--button-radius, 5px);
+}
+.st-add:hover, .st-add.open {
+	color: var(--link-color); background: var(--color-primary-950);
+	border-color: color-mix(in srgb, var(--color-primary-500) 38%, transparent);
+}
+.st-popover {
+	position: fixed; z-index: 10001; display: flex; flex-direction: column; overflow: hidden;
+	background: var(--modal-bg); border: 1px solid var(--button-border-color);
+	border-radius: 7px; box-shadow: 0 18px 44px -16px rgba(0,0,0,.8);
+}
+.st-popover .st-search { margin: 8px 8px 6px; }
+.st-pop-list { max-height: 240px; overflow-y: auto; padding: 0 6px 6px; }
+.st-pop-item {
+	display: flex; align-items: center; gap: 8px; padding: 6px 8px; cursor: pointer;
+	border-radius: var(--button-radius, 5px); font-family: var(--font-mono); font-size: 13px;
+}
+.st-pop-item:hover { background: var(--cmdpal-hover-bg-color, var(--button-bg-hover-color)); }
+.st-pop-item .plus { color: var(--link-color); }
+.st-pop-item .nm { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-pop-item .tag { font-size: 11px; color: var(--color-text-800); }
+.st-pop-foot { padding: 6px 10px; font-size: 11px; color: var(--color-text-800); border-top: 1px solid var(--cards-border-color); }
+.st-sep-input {
+	width: 44px; box-sizing: border-box; padding: 5px 0; text-align: center;
+	background: var(--button-minimal-bg-color); color: var(--text-color);
+	border: 1px solid var(--button-2nd-border-color); border-radius: var(--button-radius, 5px);
+	font-family: var(--font-mono); font-size: 13px;
+}
+.st-sep-input:focus { outline: none; border-color: var(--color-primary-500); }
+.st-preview {
+	padding: 14px 16px; background: var(--cards-bg);
+	border: 1px solid var(--cards-border-color); border-radius: 6px;
+	font-family: var(--font-mono); font-size: 14px;
+}
+.st-pv-name {
+	color: var(--link-color); font-weight: 700;
+	text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px;
+}
+.st-pv-arrow { color: var(--link-color); font-size: 12px; margin-left: 3px; }
+.st-pv-val { color: var(--link-color); opacity: .5; font-weight: 400; }
+.st-empty { color: var(--color-text-800); font-style: italic; font-size: 13px; }
+.st-foot {
+	display: flex; justify-content: flex-end; gap: 8px; padding: 14px 22px;
+	border-top: 1px solid var(--cards-border-color); background: var(--cards-bg);
+}
+.st-btn {
+	all: unset; box-sizing: border-box; padding: 6px 14px; font-size: 13px; font-weight: 600;
+	color: var(--color-text-600); cursor: pointer;
+	border: 1px solid var(--button-2nd-border-color); border-radius: var(--button-radius, 5px);
+	transition: color .13s, border-color .13s;
+}
+.st-btn:hover { color: var(--text-color); border-color: var(--text-color); }
+.st-btn[disabled] { opacity: .5; cursor: default; }
+.st-btn-primary {
+	background: var(--button-primary-bg-color); border-color: var(--button-primary-bg-color);
+	color: var(--button-primary-fg-color);
+}
+.st-btn-primary:hover { filter: brightness(1.07); color: var(--button-primary-fg-color); }
+@media (max-width: 680px) {
+	.st-body { flex-direction: column; }
+	.st-rail { width: auto; max-height: 42%; border-right: none; border-bottom: 1px solid var(--cards-border-color); }
+}
 `;
 
 /* Containers in which references must NOT be decorated. */
@@ -145,8 +256,14 @@ class Plugin extends AppPlugin {
 	observer = null;
 	handlers = [];
 	settingsEl = null;
+	shellEl = null;
+	popEl = null;
+	popAnchor = null;
+	dragIdx = null;
 	model = null;       // settings dialog working copy
 	allCols = null;     // [{name, fields:[{label,type}]}] for the dialog
+	selName = null;
+	railQ = '';
 
 	onLoad() {
 		const custom = (this.getConfiguration() || {}).custom || {};
@@ -178,7 +295,7 @@ class Plugin extends AppPlugin {
 	onUnload() {
 		if (this.observer) this.observer.disconnect();
 		for (const h of (this.handlers || [])) this.events.off(h);
-		if (this.settingsEl) this.settingsEl.remove();
+		this.closeSettings();
 		document.querySelectorAll('.texp-suffix').forEach((el) => el.remove());
 	}
 
@@ -419,7 +536,7 @@ class Plugin extends AppPlugin {
 	/* =================== settings dialog =================== */
 
 	async openSettings() {
-		if (this.settingsEl) { this.settingsEl.remove(); this.settingsEl = null; }
+		this.closeSettings();
 
 		// Available collections + their usable fields
 		const cols = await this.data.getAllCollections();
@@ -437,235 +554,388 @@ class Plugin extends AppPlugin {
 			fields: [...(s.fields || [])],
 			separator: s.separator != null ? s.separator : DEFAULT_SEPARATOR,
 		}));
+		this.selName = this.model.length ? this.model[0].name : null;
+		this.railQ = '';
 
 		const backdrop = document.createElement('div');
 		backdrop.className = 'texp-backdrop';
 		backdrop.addEventListener('mousedown', (e) => { if (e.target === backdrop) this.closeSettings(); });
-		const dialog = document.createElement('div');
-		dialog.className = 'texp-dialog';
-		backdrop.appendChild(dialog);
+		this.shellEl = document.createElement('div');
+		this.shellEl.className = 'st-shell';
+		backdrop.appendChild(this.shellEl);
 		document.body.appendChild(backdrop);
 		this.settingsEl = backdrop;
-		this.settingsKeyHandler = (e) => { if (e.key === 'Escape') { e.stopPropagation(); this.closeSettings(); } };
+		this.settingsKeyHandler = (e) => {
+			if (e.key === 'Escape') {
+				e.stopPropagation();
+				if (this.popEl) this.closePopover();
+				else this.closeSettings();
+			}
+		};
 		document.addEventListener('keydown', this.settingsKeyHandler, true);
 
-		this.renderSettings(dialog);
+		this.renderSettings();
 	}
 
 	closeSettings() {
-		if (this.settingsEl) { this.settingsEl.remove(); this.settingsEl = null; }
+		this.closePopover();
+		if (this.settingsEl) { this.settingsEl.remove(); this.settingsEl = null; this.shellEl = null; }
 		if (this.settingsKeyHandler) { document.removeEventListener('keydown', this.settingsKeyHandler, true); this.settingsKeyHandler = null; }
 	}
 
-	renderSettings(dialog) {
-		dialog.innerHTML = '';
+	/* tiny element helper */
+	mk(tag, cls, text) {
+		const el = document.createElement(tag);
+		if (cls) el.className = cls;
+		if (text != null) el.textContent = text;
+		return el;
+	}
 
-		const h2 = document.createElement('h2');
-		h2.textContent = 'Smart Titles';
-		const hint = document.createElement('p');
-		hint.className = 'texp-hint';
-		hint.textContent = 'Show property values after page names in references, search results and the quick switcher. Pick a collection, then click its properties to add them to the title.';
-		dialog.append(h2, hint);
+	searchIcon() {
+		const span = document.createElement('span');
+		span.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>';
+		span.style.display = 'flex';
+		return span.firstChild ? span : span;
+	}
 
-		for (const m of this.model) {
-			dialog.appendChild(this.renderCollectionCard(dialog, m));
-		}
+	renderSettings() {
+		if (!this.shellEl) return;
+		this.closePopover();
+		const shell = this.shellEl;
+		shell.innerHTML = '';
 
-		if (!this.model.length) {
-			const empty = document.createElement('p');
-			empty.className = 'texp-empty';
-			empty.textContent = 'No collections configured yet. Add one below.';
-			dialog.appendChild(empty);
-		}
+		// header
+		const head = this.mk('div', 'st-head');
+		head.appendChild(this.mk('h2', 'st-title', 'Smart Titles'));
+		head.appendChild(this.mk('p', 'st-desc', 'Show property values after page names in references, search results and the quick switcher. Pick a collection, then choose which of its properties appear in the title.'));
+		shell.appendChild(head);
 
-		// add-collection row
-		const addRow = document.createElement('div');
-		addRow.className = 'texp-add-row';
-		const select = document.createElement('select');
-		select.className = 'texp-select';
-		const placeholder = document.createElement('option');
-		placeholder.value = '';
-		placeholder.textContent = '+ Add collection…';
-		select.appendChild(placeholder);
-		const configured = new Set(this.model.map((m) => m.name));
-		for (const c of this.allCols) {
-			if (configured.has(c.name) || !c.fields.length) continue;
-			const opt = document.createElement('option');
-			opt.value = c.name;
-			opt.textContent = c.name;
-			select.appendChild(opt);
-		}
-		select.addEventListener('change', () => {
-			if (!select.value) return;
-			this.model.push({ name: select.value, fields: [], separator: DEFAULT_SEPARATOR });
-			this.renderSettings(dialog);
-		});
-		addRow.appendChild(select);
-		dialog.appendChild(addRow);
+		// body: rail + detail
+		const body = this.mk('div', 'st-body');
+		body.appendChild(this.renderRail());
+		body.appendChild(this.renderDetail());
+		shell.appendChild(body);
 
 		// footer
-		const footer = document.createElement('div');
-		footer.className = 'texp-footer';
-		const cancel = document.createElement('button');
-		cancel.className = 'texp-btn';
-		cancel.textContent = 'Cancel';
+		const foot = this.mk('div', 'st-foot');
+		const cancel = this.mk('button', 'st-btn', 'Cancel');
 		cancel.addEventListener('click', () => this.closeSettings());
-		const save = document.createElement('button');
-		save.className = 'texp-btn texp-btn-primary';
-		save.textContent = 'Save';
+		const save = this.mk('button', 'st-btn st-btn-primary', 'Save');
 		save.addEventListener('click', () => this.saveSettings(save));
-		footer.append(cancel, save);
-		dialog.appendChild(footer);
+		foot.append(cancel, save);
+		shell.appendChild(foot);
 	}
 
-	renderCollectionCard(dialog, m) {
+	renderRail() {
+		const rail = this.mk('div', 'st-rail');
+
+		const head = this.mk('div', 'st-rail-head');
+		head.appendChild(this.mk('span', 'st-label', 'Collections'));
+		head.appendChild(this.mk('span', 'st-count-pill', String(this.model.length)));
+		rail.appendChild(head);
+
+		const search = this.mk('div', 'st-search');
+		search.appendChild(this.searchIcon());
+		const input = document.createElement('input');
+		input.type = 'text';
+		input.placeholder = 'Find a collection…';
+		input.value = this.railQ;
+		search.appendChild(input);
+		rail.appendChild(search);
+
+		const list = this.mk('div', 'st-rail-list');
+		const fillList = () => {
+			list.innerHTML = '';
+			const q = this.railQ.trim().toLowerCase();
+			for (const m of this.model) {
+				if (q && !(m.name.toLowerCase().includes(q) || m.fields.join(' ').toLowerCase().includes(q))) continue;
+				const row = this.mk('button', 'st-rail-row' + (m.name === this.selName ? ' sel' : ''));
+				row.appendChild(this.mk('span', 'nm', m.name));
+				row.appendChild(this.mk('span', 'st-badge', String(m.fields.length)));
+				row.addEventListener('click', () => { this.selName = m.name; this.renderSettings(); });
+				list.appendChild(row);
+			}
+			if (!list.childElementCount) {
+				const empty = this.mk('div', 'st-empty', this.model.length ? 'No matches.' : 'Nothing configured yet.');
+				empty.style.padding = '8px 10px';
+				list.appendChild(empty);
+			}
+		};
+		fillList();
+		input.addEventListener('input', () => { this.railQ = input.value; fillList(); });
+		rail.appendChild(list);
+
+		const add = this.mk('button', 'st-add-coll', '+ Add collection');
+		add.addEventListener('click', () => this.openCollectionPicker(add));
+		rail.appendChild(add);
+
+		return rail;
+	}
+
+	renderDetail() {
+		const detail = this.mk('div', 'st-detail');
+		const m = this.model.find((x) => x.name === this.selName);
+		if (!m) {
+			const empty = this.mk('div', 'st-empty', 'Select a collection to edit.');
+			empty.style.marginTop = '8px';
+			detail.appendChild(empty);
+			return detail;
+		}
 		const colInfo = this.allCols.find((c) => c.name === m.name);
 		const available = colInfo ? colInfo.fields : [];
-		const typeOf = (label) => { const f = available.find((x) => x.label === label); return f ? f.type : null; };
 
-		const card = document.createElement('div');
-		card.className = 'texp-card';
-
-		const head = document.createElement('div');
-		head.className = 'texp-card-head';
-		const name = document.createElement('span');
-		name.className = 'texp-col-name';
-		name.textContent = m.name;
-		const remove = document.createElement('button');
-		remove.className = 'texp-icon-btn';
-		remove.title = 'Remove this collection from Smart Titles';
-		remove.textContent = '✕';
+		// editor header
+		const head = this.mk('div', 'st-ed-head');
+		head.appendChild(this.mk('div', 'st-ed-name', m.name));
+		const remove = this.mk('button', 'st-remove', '\u2715 Remove');
 		remove.addEventListener('click', () => {
 			this.model = this.model.filter((x) => x !== m);
-			this.renderSettings(dialog);
+			this.selName = this.model.length ? this.model[0].name : null;
+			this.renderSettings();
 		});
-		head.append(name, remove);
-		card.appendChild(head);
+		head.appendChild(remove);
+		detail.appendChild(head);
 
-		// chosen fields, in order
-		const chosenLabel = document.createElement('div');
-		chosenLabel.className = 'texp-section-label';
-		chosenLabel.textContent = 'In title (in order)';
-		card.appendChild(chosenLabel);
-		const chosen = document.createElement('div');
-		chosen.className = 'texp-pills';
-		if (!m.fields.length) {
-			const none = document.createElement('span');
-			none.className = 'texp-empty';
-			none.textContent = 'Nothing yet — click a property below to add it.';
-			chosen.appendChild(none);
-		}
-		m.fields.forEach((label, i) => {
-			const pill = document.createElement('span');
-			pill.className = 'texp-pill texp-chosen';
-			const left = document.createElement('button');
-			left.textContent = '‹';
-			left.title = 'Move earlier';
-			left.disabled = i === 0;
-			left.addEventListener('click', () => {
-				if (i === 0) return;
-				[m.fields[i - 1], m.fields[i]] = [m.fields[i], m.fields[i - 1]];
-				this.renderSettings(dialog);
-			});
-			const right = document.createElement('button');
-			right.textContent = '›';
-			right.title = 'Move later';
-			right.addEventListener('click', () => {
-				if (i >= m.fields.length - 1) return;
-				[m.fields[i + 1], m.fields[i]] = [m.fields[i], m.fields[i + 1]];
-				this.renderSettings(dialog);
-			});
-			const text = document.createElement('span');
-			text.textContent = label;
-			const x = document.createElement('button');
-			x.textContent = '✕';
-			x.title = 'Remove from title';
-			x.addEventListener('click', () => {
-				m.fields = m.fields.filter((f) => f !== label);
-				this.renderSettings(dialog);
-			});
-			pill.append(left, text, right, x);
-			chosen.appendChild(pill);
-		});
-		card.appendChild(chosen);
-
-		// available fields
-		const availLabel = document.createElement('div');
-		availLabel.className = 'texp-section-label';
-		availLabel.textContent = 'Available properties (click to add)';
-		card.appendChild(availLabel);
-		const avail = document.createElement('div');
-		avail.className = 'texp-pills';
-		const unused = available.filter((f) => !m.fields.includes(f.label));
-		if (!unused.length) {
-			const none = document.createElement('span');
-			none.className = 'texp-empty';
-			none.textContent = available.length ? 'All properties added.' : 'This collection has no usable properties.';
-			avail.appendChild(none);
-		}
-		for (const f of unused) {
-			const pill = document.createElement('span');
-			pill.className = 'texp-pill';
-			pill.title = 'Add to title';
-			const text = document.createElement('span');
-			text.textContent = f.label;
-			const type = document.createElement('span');
-			type.className = 'texp-type';
-			type.textContent = f.type;
-			pill.append(text, type);
-			pill.addEventListener('click', () => {
-				m.fields.push(f.label);
-				this.renderSettings(dialog);
-			});
-			avail.appendChild(pill);
-		}
-		card.appendChild(avail);
+		// chips
+		detail.appendChild(this.mk('div', 'st-label st-sec-label', 'In title (in order)'));
+		const chips = this.mk('div', 'st-chips');
+		m.fields.forEach((label, i) => chips.appendChild(this.renderChip(m, label, i)));
+		const addBtn = this.mk('button', 'st-add', '+ Add property');
+		addBtn.addEventListener('click', () => this.openPropertyPicker(addBtn, m, available));
+		chips.appendChild(addBtn);
+		if (!m.fields.length) chips.insertBefore(this.mk('span', 'st-empty', 'No properties yet \u2014 add one.'), addBtn);
+		detail.appendChild(chips);
 
 		// separator
-		const sepRow = document.createElement('div');
-		sepRow.className = 'texp-sep-row';
-		const sepLabel = document.createElement('label');
-		sepLabel.textContent = 'Separator';
-		const sepInput = document.createElement('input');
-		sepInput.className = 'texp-sep-input';
-		sepInput.value = m.separator;
-		sepInput.addEventListener('input', () => {
-			m.separator = sepInput.value;
-			preview.replaceChildren(this.buildPreview(m));
-		});
-		sepRow.append(sepLabel, sepInput);
-		card.appendChild(sepRow);
+		detail.appendChild(this.mk('div', 'st-label st-sec-label', 'Separator'));
+		const sep = document.createElement('input');
+		sep.className = 'st-sep-input';
+		sep.maxLength = 3;
+		sep.value = m.separator;
+		detail.appendChild(sep);
 
-		// live preview
-		const preview = document.createElement('div');
-		preview.className = 'texp-preview';
-		preview.appendChild(this.buildPreview(m));
-		card.appendChild(preview);
+		// preview
+		detail.appendChild(this.mk('div', 'st-label st-sec-label', 'Preview'));
+		const preview = this.mk('div', 'st-preview');
+		const fillPreview = () => {
+			preview.innerHTML = '';
+			preview.appendChild(this.mk('span', 'st-pv-name', 'Page name'));
+			preview.appendChild(this.mk('span', 'st-pv-arrow ti ti-arrow-up-right'));
+			if (m.fields.length) {
+				const sepText = m.separator.trim() ? ' ' + m.separator.trim() + ' ' : m.separator;
+				preview.appendChild(this.mk('span', 'st-pv-val', m.fields.map((f) => sepText + f).join('')));
+			} else {
+				preview.appendChild(this.mk('span', 'st-empty', '  \u2014 no properties yet'));
+			}
+		};
+		fillPreview();
+		sep.addEventListener('input', () => { m.separator = sep.value; fillPreview(); });
+		detail.appendChild(preview);
 
-		return card;
+		return detail;
 	}
 
-	buildPreview(m) {
-		const frag = document.createDocumentFragment();
-		const name = document.createElement('span');
-		name.textContent = 'Preview:  Page name';
-		frag.appendChild(name);
-		if (m.fields.length) {
-			const suffix = document.createElement('span');
-			suffix.className = 'texp-suffix';
-			suffix.textContent = m.separator + m.fields.join(m.separator);
-			frag.appendChild(suffix);
+	renderChip(m, label, i) {
+		const chip = this.mk('span', 'st-chip');
+		chip.draggable = true;
+
+		const left = this.mk('button', null, '\u2039');
+		left.title = 'Move earlier';
+		if (i === 0) left.disabled = true;
+		left.addEventListener('click', () => {
+			if (i === 0) return;
+			[m.fields[i - 1], m.fields[i]] = [m.fields[i], m.fields[i - 1]];
+			this.renderSettings();
+		});
+		const name = this.mk('span', null, label);
+		const right = this.mk('button', null, '\u203a');
+		right.title = 'Move later';
+		if (i >= m.fields.length - 1) right.disabled = true;
+		right.addEventListener('click', () => {
+			if (i >= m.fields.length - 1) return;
+			[m.fields[i + 1], m.fields[i]] = [m.fields[i], m.fields[i + 1]];
+			this.renderSettings();
+		});
+		const x = this.mk('button', null, '\u2715');
+		x.title = 'Remove from title';
+		x.addEventListener('click', () => {
+			m.fields = m.fields.filter((f) => f !== label);
+			this.renderSettings();
+		});
+		chip.append(left, name, right, x);
+
+		// drag reorder
+		chip.addEventListener('dragstart', (e) => {
+			this.dragIdx = i;
+			chip.classList.add('st-dragging');
+			e.dataTransfer.effectAllowed = 'move';
+		});
+		chip.addEventListener('dragend', () => {
+			this.dragIdx = null;
+			chip.classList.remove('st-dragging');
+		});
+		chip.addEventListener('dragover', (e) => {
+			if (this.dragIdx == null || this.dragIdx === i) return;
+			e.preventDefault();
+			chip.classList.add('st-droptarget');
+		});
+		chip.addEventListener('dragleave', () => chip.classList.remove('st-droptarget'));
+		chip.addEventListener('drop', (e) => {
+			e.preventDefault();
+			if (this.dragIdx == null || this.dragIdx === i) return;
+			const [moved] = m.fields.splice(this.dragIdx, 1);
+			m.fields.splice(i, 0, moved);
+			this.dragIdx = null;
+			this.renderSettings();
+		});
+
+		return chip;
+	}
+
+	/* --- portaled, flip-aware popover --- */
+
+	openPopover(anchor, width, build) {
+		this.closePopover();
+		const pop = this.mk('div', 'st-popover');
+		pop.style.width = width + 'px';
+		build(pop);
+		this.settingsEl.appendChild(pop);
+
+		const r = anchor.getBoundingClientRect();
+		const ph = pop.offsetHeight;
+		const left = Math.min(Math.max(8, r.left), window.innerWidth - width - 8);
+		const below = window.innerHeight - r.bottom;
+		let top;
+		if (below < ph + 12 && r.top > below) top = Math.max(8, r.top - ph - 6);
+		else top = Math.min(r.bottom + 6, window.innerHeight - ph - 8);
+		pop.style.left = left + 'px';
+		pop.style.top = top + 'px';
+
+		this.popEl = pop;
+		this.popAnchor = anchor;
+		anchor.classList.add('open');
+		this.popOutsideHandler = (e) => {
+			if (pop.contains(e.target) || anchor.contains(e.target)) return;
+			this.closePopover();
+		};
+		this.popScrollHandler = (e) => {
+			if (e && e.target && pop.contains(e.target)) return;
+			this.closePopover();
+		};
+		setTimeout(() => {
+			document.addEventListener('mousedown', this.popOutsideHandler, true);
+			document.addEventListener('scroll', this.popScrollHandler, true);
+			window.addEventListener('resize', this.popScrollHandler);
+		}, 0);
+		const inp = pop.querySelector('input');
+		if (inp) inp.focus();
+	}
+
+	closePopover() {
+		if (!this.popEl) return;
+		this.popEl.remove();
+		this.popEl = null;
+		if (this.popAnchor) { this.popAnchor.classList.remove('open'); this.popAnchor = null; }
+		if (this.popOutsideHandler) { document.removeEventListener('mousedown', this.popOutsideHandler, true); this.popOutsideHandler = null; }
+		if (this.popScrollHandler) {
+			document.removeEventListener('scroll', this.popScrollHandler, true);
+			window.removeEventListener('resize', this.popScrollHandler);
+			this.popScrollHandler = null;
 		}
-		return frag;
+	}
+
+	openPropertyPicker(anchor, m, available) {
+		this.openPopover(anchor, 290, (pop) => {
+			const search = this.mk('div', 'st-search');
+			search.appendChild(this.searchIcon());
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.placeholder = 'Search properties\u2026';
+			search.appendChild(input);
+			pop.appendChild(search);
+
+			const list = this.mk('div', 'st-pop-list');
+			pop.appendChild(list);
+			const foot = this.mk('div', 'st-pop-foot');
+			pop.appendChild(foot);
+
+			const pool = () => available.filter((f) => !m.fields.includes(f.label));
+			const fill = () => {
+				list.innerHTML = '';
+				const q = input.value.trim().toLowerCase();
+				const items = pool().filter((f) => !q || f.label.toLowerCase().includes(q) || f.type.includes(q));
+				for (const f of items) {
+					const item = this.mk('div', 'st-pop-item');
+					item.appendChild(this.mk('span', 'plus', '+'));
+					item.appendChild(this.mk('span', 'nm', f.label));
+					item.appendChild(this.mk('span', 'tag', f.type));
+					item.addEventListener('click', () => { m.fields.push(f.label); this.renderSettings(); });
+					list.appendChild(item);
+				}
+				if (!items.length) list.appendChild(this.mk('div', 'st-empty', q ? 'No matches.' : 'All properties added.'));
+				foot.textContent = pool().length + ' available \u00b7 click to add';
+				return items;
+			};
+			let current = fill();
+			input.addEventListener('input', () => { current = fill(); });
+			input.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' && current.length) { m.fields.push(current[0].label); this.renderSettings(); }
+			});
+		});
+	}
+
+	openCollectionPicker(anchor) {
+		this.openPopover(anchor, 264, (pop) => {
+			const search = this.mk('div', 'st-search');
+			search.appendChild(this.searchIcon());
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.placeholder = 'Search collections\u2026';
+			search.appendChild(input);
+			pop.appendChild(search);
+
+			const list = this.mk('div', 'st-pop-list');
+			pop.appendChild(list);
+
+			const configured = () => new Set(this.model.map((x) => x.name));
+			const pool = () => this.allCols.filter((c) => !configured().has(c.name) && c.fields.length);
+			const fill = () => {
+				list.innerHTML = '';
+				const q = input.value.trim().toLowerCase();
+				const items = pool().filter((c) => !q || c.name.toLowerCase().includes(q));
+				for (const c of items) {
+					const item = this.mk('div', 'st-pop-item');
+					item.appendChild(this.mk('span', 'plus', '+'));
+					item.appendChild(this.mk('span', 'nm', c.name));
+					item.appendChild(this.mk('span', 'tag', c.fields.length + ' props'));
+					item.addEventListener('click', () => {
+						this.model.push({ name: c.name, fields: [], separator: DEFAULT_SEPARATOR });
+						this.selName = c.name;
+						this.renderSettings();
+					});
+					list.appendChild(item);
+				}
+				if (!items.length) list.appendChild(this.mk('div', 'st-empty', q ? 'No matches.' : 'All collections added.'));
+				return items;
+			};
+			let current = fill();
+			input.addEventListener('input', () => { current = fill(); });
+			input.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' && current.length) {
+					this.model.push({ name: current[0].name, fields: [], separator: DEFAULT_SEPARATOR });
+					this.selName = current[0].name;
+					this.renderSettings();
+				}
+			});
+		});
 	}
 
 	async saveSettings(saveBtn) {
 		saveBtn.disabled = true;
-		saveBtn.textContent = 'Saving…';
+		saveBtn.textContent = 'Saving\u2026';
 		try {
 			const collections = {};
 			for (const m of this.model) {
-				if (!m.fields.length) continue; // skip empty configs
 				collections[m.name] = { fields: m.fields, separator: m.separator };
 			}
 			const conf = this.getConfiguration() || {};
