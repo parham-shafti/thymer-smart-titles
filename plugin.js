@@ -35,6 +35,17 @@ const CSS = `
 	white-space: pre;
 }
 
+/* Widen the inline @ menu so suffixes have room (Thymer's default is 400px).
+ * A fixed width is required: the menu's rows are absolutely positioned, so
+ * content-based sizing (max-content) collapses to the minimum. Desktop only —
+ * narrow/mobile screens keep Thymer's native sizing. */
+@media (min-width: 800px) {
+	.cmdpal--inline {
+		width: 600px !important;
+		max-width: calc(100vw - 20px) !important;
+	}
+}
+
 /* --- settings dialog --- */
 .texp-backdrop {
 	position: fixed; inset: 0; z-index: 10000;
@@ -278,13 +289,27 @@ class Plugin extends AppPlugin {
 				if (!node || !node.nodeType || !result) continue;
 				const label = node.querySelector('.autocomplete--option-label');
 				if (!label) continue;
-				const guid = result.obj && result.obj.json && result.obj.json.guid;
+				const guid = this.guidFromResult(result.obj || result);
 				if (guid) this.applySuffix(label, guid);
 				else this.removeSuffix(label);
 			}
 		} catch (e) {
 			/* internals changed — skip silently */
 		}
+	}
+
+	/* Record guid of an autocomplete entry. Jump To stores it as json.guid;
+	 * the inline @ menu stores it directly as the option's value. */
+	guidFromResult(o) {
+		if (!o) return null;
+		if (o.json && o.json.guid) return o.json.guid;
+		if (typeof o.value === 'string' && this.looksLikeGuid(o.value)) return o.value;
+		return null;
+	}
+
+	looksLikeGuid(s) {
+		// Thymer record guids: 20+ chars, uppercase letters + digits, no spaces.
+		return /^[0-9A-Z]{20,}$/.test(s);
 	}
 
 	/* --- suffix computation and DOM application --- */
@@ -298,6 +323,19 @@ class Plugin extends AppPlugin {
 		const span = document.createElement('span');
 		span.className = 'texp-suffix';
 		span.textContent = suffix;
+		// the inline @ menu ends its labels with a trailing "→" — sometimes as
+		// its own text node, sometimes glued to the name (e.g. "Name ... → ").
+		// Split the arrow off and keep it last so every row reads "Name – props →".
+		const last = el.lastChild;
+		if (last && last.nodeType === 3) {
+			const m = last.textContent.match(/^([\s\S]*?)(\s*→\s*)$/);
+			if (m) {
+				last.textContent = m[1];
+				el.appendChild(span);
+				el.appendChild(document.createTextNode(m[2]));
+				return;
+			}
+		}
 		el.appendChild(span);
 	}
 
